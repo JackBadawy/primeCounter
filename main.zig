@@ -4,13 +4,27 @@ const Error = error{
     SmallNumberError,
 };
 
+// pub fn isPrime(numToCheck: i32) bool {
+//     var i: i32 = 2;
+//     var flNum: f64 = @floatFromInt(numToCheck);
+//     if (numToCheck <= 1) return false;
+//     const sqrtNum: i32 = @intFromFloat(@sqrt(flNum));
+//     while (i <= sqrtNum) : (i += 1) {
+//         if (@mod(numToCheck, i) == 0) return false;
+//     }
+//     return true;
+// }
+
 pub fn isPrime(numToCheck: i32) bool {
-    var i: i32 = 2;
-    var flNum: f64 = @floatFromInt(numToCheck);
     if (numToCheck <= 1) return false;
-    const sqrtNum: i32 = @intFromFloat(@sqrt(flNum));
-    while (i <= sqrtNum) : (i += 1) {
+    if (numToCheck <= 3) return true;
+    if (@mod(numToCheck, 2) == 0) return false;
+    if (@mod(numToCheck, 3) == 0) return false;
+
+    var i: i32 = 5;
+    while (i * i <= numToCheck) : (i += 6) {
         if (@mod(numToCheck, i) == 0) return false;
+        if (@mod(numToCheck, i + 2) == 0) return false;
     }
     return true;
 }
@@ -28,18 +42,18 @@ pub fn countPrimes(upTo: i32) !i32 {
 }
 
 fn read_num(stdin: *const std.fs.File) i32 {
-    var buf: [20]u8 = undefined;
-    const len = stdin.*.read(&buf) catch |err| {
+    var buffer: [20]u8 = undefined;
+    const len = stdin.*.read(&buffer) catch |err| {
         std.debug.print("Error while reading number: {}\n", .{err});
         std.os.exit(1);
     };
 
-    if (len == buf.len) {
+    if (len == buffer.len) {
         std.debug.print("Input is too big!\n", .{});
         std.os.exit(1);
     }
 
-    const line = std.mem.trimRight(u8, buf[0..len], "\r\n");
+    const line = std.mem.trimRight(u8, buffer[0..len], "\r\n");
     const val = std.fmt.parseInt(i32, line, 10) catch |err| {
         std.debug.print("Error while reading number: {}\n", .{err});
         std.os.exit(1);
